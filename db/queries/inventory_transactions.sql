@@ -8,17 +8,20 @@ WHERE id = $1 LIMIT 1;
 SELECT it.*, ps.sku_code
 FROM inventory_transactions it
 JOIN product_skus ps ON it.sku_id = ps.id
-ORDER BY it.transaction_date DESC;
+ORDER BY it.transaction_date DESC
+LIMIT $1 OFFSET $2;
 
 -- name: ListInventoryTransactionsBySkuID :many
 SELECT * FROM inventory_transactions
 WHERE sku_id = $1
-ORDER BY transaction_date DESC;
+ORDER BY transaction_date DESC
+LIMIT $2 OFFSET $3;
 
--- name: ListInventoryTransactionsByReferenceIDAndType :many
-SELECT * FROM inventory_transactions
-WHERE reference_id = $1 AND transaction_type = $2
-ORDER BY transaction_date DESC;
+-- -- name: ListInventoryTransactionsByReferenceIDAndType :many
+-- SELECT * FROM inventory_transactions
+-- WHERE reference_id = $1 AND transaction_type = $2
+-- ORDER BY transaction_date DESC
+-- LIMIT $3 OFFSET $4;
 
 -- name: CreateInventoryTransaction :one
 INSERT INTO inventory_transactions (

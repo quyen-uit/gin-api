@@ -7,7 +7,8 @@ WHERE id = $1 LIMIT 1;
 -- name: ListReviewImagesByReviewID :many
 SELECT * FROM review_images
 WHERE review_id = $1
-ORDER BY id;
+ORDER BY id
+LIMIT $2 OFFSET $3;
 
 -- name: CreateReviewImage :one
 INSERT INTO review_images (

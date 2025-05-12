@@ -6,8 +6,9 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListProducts :many
 SELECT * FROM products
-WHERE is_active = TRUE
-ORDER BY name;
+WHERE is_active = $1 OR $1 IS NULL
+ORDER BY name
+LIMIT $2 OFFSET $3;
 
 -- name: CreateProduct :one
 INSERT INTO products (
@@ -46,25 +47,30 @@ WHERE id = $1;
 
 -- name: ListProductsByCategory :many
 SELECT * FROM products
-WHERE category_id = $1 AND is_active = TRUE
-ORDER BY name;
+WHERE category_id = $1 AND (is_active = $2 OR $2 IS NULL)
+ORDER BY name
+LIMIT $3 OFFSET $4;
 
 -- name: ListProductsByBrand :many
 SELECT * FROM products
-WHERE brand_id = $1 AND is_active = TRUE
-ORDER BY name;
+WHERE brand_id = $1 AND (is_active = $2 OR $2 IS NULL)
+ORDER BY name
+LIMIT $3 OFFSET $4;
 
 -- name: ListNewProducts :many
 SELECT * FROM products
-WHERE is_new = TRUE AND is_active = TRUE
-ORDER BY name;
+WHERE is_new = TRUE AND (is_active = $2 OR $2 IS NULL)
+ORDER BY name
+LIMIT $3 OFFSET $4;
 
 -- name: ListTrendingProducts :many
 SELECT * FROM products
-WHERE is_trending = TRUE AND is_active = TRUE
-ORDER BY name;
+WHERE is_trending = TRUE AND (is_active = $2 OR $2 IS NULL)
+ORDER BY name
+LIMIT $3 OFFSET $4;
 
 -- name: SearchProducts :many
 SELECT * FROM products
-WHERE is_active = TRUE AND (name ILIKE $1 OR description ILIKE $1)
-ORDER BY name;
+WHERE name ILIKE $1 AND (is_active = $2 OR $2 IS NULL)
+ORDER BY name
+LIMIT $3 OFFSET $4;

@@ -10,7 +10,8 @@ FROM order_items oi
 JOIN product_skus ps ON oi.sku_id = ps.id
 JOIN products p ON ps.product_id = p.id
 WHERE oi.order_id = $1
-ORDER BY p.name;
+ORDER BY p.name
+LIMIT $2 OFFSET $3;
 
 -- name: CreateOrderItem :one
 INSERT INTO order_items (

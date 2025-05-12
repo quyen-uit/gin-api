@@ -9,7 +9,8 @@ SELECT roi.*, ps.sku_code
 FROM return_order_items roi
 JOIN product_skus ps ON roi.sku_id = ps.id
 WHERE roi.return_order_id = $1
-ORDER BY roi.id;
+ORDER BY roi.id
+LIMIT $2 OFFSET $3;
 
 -- name: CreateReturnOrderItem :one
 INSERT INTO return_order_items (

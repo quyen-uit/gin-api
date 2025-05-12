@@ -6,7 +6,8 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListSizes :many
 SELECT * FROM sizes
-ORDER BY name;
+ORDER BY name
+LIMIT $1 OFFSET $2;
 
 -- name: CreateSize :one
 INSERT INTO sizes (

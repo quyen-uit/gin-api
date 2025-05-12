@@ -4,18 +4,14 @@
 SELECT * FROM cart_items
 WHERE id = $1 LIMIT 1;
 
--- name: GetCartItemByCartIDAndSkuID :one
-SELECT * FROM cart_items
-WHERE cart_id = $1 AND sku_id = $2
-LIMIT 1;
-
 -- name: ListCartItemsByCartID :many
 SELECT ci.*, ps.sku_code, p.name as product_name, p.thumbnail as product_thumbnail, ps.price as sku_price
 FROM cart_items ci
 JOIN product_skus ps ON ci.sku_id = ps.id
 JOIN products p ON ps.product_id = p.id
 WHERE ci.cart_id = $1
-ORDER BY ci.id;
+ORDER BY ci.id
+LIMIT $2 OFFSET $3;
 
 -- name: CreateCartItem :one
 INSERT INTO cart_items (

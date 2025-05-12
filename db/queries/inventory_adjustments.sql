@@ -8,12 +8,14 @@ WHERE id = $1 LIMIT 1;
 SELECT ia.*, ps.sku_code
 FROM inventory_adjustments ia
 JOIN product_skus ps ON ia.sku_id = ps.id
-ORDER BY ia.adjustment_date DESC;
+ORDER BY ia.adjustment_date DESC
+LIMIT $1 OFFSET $2;
 
 -- name: ListInventoryAdjustmentsBySkuID :many
 SELECT * FROM inventory_adjustments
 WHERE sku_id = $1
-ORDER BY adjustment_date DESC;
+ORDER BY adjustment_date DESC
+LIMIT $2 OFFSET $3;
 
 -- name: CreateInventoryAdjustment :one
 INSERT INTO inventory_adjustments (

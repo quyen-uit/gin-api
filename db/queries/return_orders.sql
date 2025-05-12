@@ -6,12 +6,14 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListReturnOrders :many
 SELECT * FROM return_orders
-ORDER BY return_date DESC;
+ORDER BY return_date DESC
+LIMIT $1 OFFSET $2;
 
--- name: ListReturnOrdersByOrderID :many
+-- name: ListReturnOrdersByUserID :many
 SELECT * FROM return_orders
-WHERE order_id = $1
-ORDER BY return_date DESC;
+WHERE user_id = $1
+ORDER BY return_date DESC
+LIMIT $2 OFFSET $3;
 
 -- name: CreateReturnOrder :one
 INSERT INTO return_orders (
@@ -20,9 +22,10 @@ INSERT INTO return_orders (
   reason,
   status,
   notes,
-  total_amount
+  total_amount,
+  user_id
 ) VALUES (
-  $1, $2, $3, $4, $5, $6
+  $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *;
 

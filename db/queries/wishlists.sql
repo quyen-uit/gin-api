@@ -5,11 +5,14 @@ SELECT * FROM wishlists
 WHERE id = $1 LIMIT 1;
 
 -- name: ListWishlistItemsByUser :many
-SELECT w.*, p.name as product_name, p.thumbnail as product_thumbnail
+SELECT sqlc.embed(w), sqlc.embed(p)
 FROM wishlists w
 JOIN products p ON w.product_id = p.id
 WHERE w.user_id = $1
-ORDER BY w.created_at DESC;
+ORDER BY w.created_at DESC
+LIMIT $2 OFFSET $3;
+
+
 
 -- name: AddProductToWishlist :one
 INSERT INTO wishlists (
@@ -23,8 +26,3 @@ RETURNING *;
 -- name: RemoveProductFromWishlist :exec
 DELETE FROM wishlists
 WHERE user_id = $1 AND product_id = $2;
-
--- name: GetWishlistItemByUserAndProduct :one
-SELECT * FROM wishlists
-WHERE user_id = $1 AND product_id = $2
-LIMIT 1;

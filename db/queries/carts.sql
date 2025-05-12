@@ -4,15 +4,10 @@
 SELECT * FROM carts
 WHERE id = $1 LIMIT 1;
 
--- name: GetActiveCartByCustomerID :one
+-- name: ListCarts :many
 SELECT * FROM carts
-WHERE customer_id = $1 AND status = 'active' -- Assuming 'active' is a status, adjust if necessary
-LIMIT 1;
-
--- name: ListCartsByCustomerID :many
-SELECT * FROM carts
-WHERE customer_id = $1
-ORDER BY created_at DESC;
+ORDER BY created_at DESC
+LIMIT $1 OFFSET $2;
 
 -- name: CreateCart :one
 INSERT INTO carts (

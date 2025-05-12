@@ -45,14 +45,6 @@ CREATE TABLE product_brands (
     description text
 );
 
-CREATE TABLE customers (
-    id bigint primary key generated always as identity,
-    first_name text not null,
-    last_name text not null,
-    email text unique not null,
-    phone text not null
-);
-
 CREATE TABLE products (
     id bigint primary key generated always as identity,
     name text not null,
@@ -93,7 +85,7 @@ CREATE TABLE product_skus (
 
 CREATE TABLE orders (
     id bigint primary key generated always as identity,
-    customer_id bigint,
+    user_id bigint,
     order_date timestamp with time zone default now(),
     total_amount numeric,
     status order_status not null,
@@ -123,7 +115,7 @@ CREATE TABLE price_adjustments (
 CREATE TABLE reviews (
     id bigint primary key generated always as identity,
     product_id bigint,
-    customer_id bigint,
+    user_id bigint,
     rating integer check (rating >= 1 AND rating <= 5),
     comment text not null,
     created_at timestamp with time zone default now()
@@ -132,6 +124,7 @@ CREATE TABLE reviews (
 CREATE TABLE sku_images (
     id bigint primary key generated always as identity,
     sku_id bigint,
+    display_order integer default 0,
     image_url text not null
 );
 
@@ -187,7 +180,8 @@ CREATE TABLE return_orders (
     reason text not null,
     status return_order_status not null,
     notes text,
-    total_amount numeric
+    total_amount numeric,
+    user_id bigint
 );
 
 CREATE TABLE return_order_items (
@@ -201,7 +195,7 @@ CREATE TABLE return_order_items (
 
 CREATE TABLE carts (
     id bigint primary key generated always as identity,
-    customer_id bigint,
+    user_id bigint,
     created_at timestamp with time zone default now(),
     status text not null
 );
@@ -224,12 +218,12 @@ ALTER TABLE wishlists ADD CONSTRAINT fk_wishlists_user FOREIGN KEY (user_id) REF
 ALTER TABLE product_skus ADD CONSTRAINT fk_skus_product FOREIGN KEY (product_id) REFERENCES products(id);
 ALTER TABLE product_skus ADD CONSTRAINT fk_skus_color FOREIGN KEY (color_id) REFERENCES colors(id);
 ALTER TABLE product_skus ADD CONSTRAINT fk_skus_size FOREIGN KEY (size_id) REFERENCES sizes(id);
-ALTER TABLE orders ADD CONSTRAINT fk_orders_customer FOREIGN KEY (customer_id) REFERENCES customers(id);
+ALTER TABLE orders ADD CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id);
 ALTER TABLE order_items ADD CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(id);
 ALTER TABLE order_items ADD CONSTRAINT fk_order_items_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
 ALTER TABLE price_adjustments ADD CONSTRAINT fk_price_adjustments_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
 ALTER TABLE reviews ADD CONSTRAINT fk_reviews_product FOREIGN KEY (product_id) REFERENCES products(id);
-ALTER TABLE reviews ADD CONSTRAINT fk_reviews_customer FOREIGN KEY (customer_id) REFERENCES customers(id);
+ALTER TABLE reviews ADD CONSTRAINT fk_reviews_user FOREIGN KEY (user_id) REFERENCES users(id);
 ALTER TABLE sku_images ADD CONSTRAINT fk_sku_images_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
 ALTER TABLE review_images ADD CONSTRAINT fk_review_images_review FOREIGN KEY (review_id) REFERENCES reviews(id);
 ALTER TABLE inventory_imports ADD CONSTRAINT fk_inventory_imports_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
@@ -237,8 +231,9 @@ ALTER TABLE inventory_imports ADD CONSTRAINT fk_inventory_imports_vendor FOREIGN
 ALTER TABLE inventory_adjustments ADD CONSTRAINT fk_inventory_adjustments_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
 ALTER TABLE inventory_transactions ADD CONSTRAINT fk_inventory_transactions_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
 ALTER TABLE return_orders ADD CONSTRAINT fk_return_orders_order FOREIGN KEY (order_id) REFERENCES orders(id);
+ALTER TABLE return_orders ADD CONSTRAINT fk_return_orders_user FOREIGN KEY (user_id) REFERENCES users(id);
 ALTER TABLE return_order_items ADD CONSTRAINT fk_return_order_items_return_order FOREIGN KEY (return_order_id) REFERENCES return_orders(id);
 ALTER TABLE return_order_items ADD CONSTRAINT fk_return_order_items_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);
-ALTER TABLE carts ADD CONSTRAINT fk_carts_customer FOREIGN KEY (customer_id) REFERENCES customers(id);
+ALTER TABLE carts ADD CONSTRAINT fk_carts_user FOREIGN KEY (user_id) REFERENCES users(id);
 ALTER TABLE cart_items ADD CONSTRAINT fk_cart_items_cart FOREIGN KEY (cart_id) REFERENCES carts(id);
 ALTER TABLE cart_items ADD CONSTRAINT fk_cart_items_sku FOREIGN KEY (sku_id) REFERENCES product_skus(id);

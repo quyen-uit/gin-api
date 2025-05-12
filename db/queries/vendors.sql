@@ -6,7 +6,8 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListVendors :many
 SELECT * FROM vendors
-ORDER BY name;
+ORDER BY name
+LIMIT $1 OFFSET $2;
 
 -- name: CreateVendor :one
 INSERT INTO vendors (

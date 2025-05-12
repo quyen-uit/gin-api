@@ -10,15 +10,17 @@ WHERE sku_code = $1 LIMIT 1;
 
 -- name: ListProductSkus :many
 SELECT * FROM product_skus
-ORDER BY sku_code;
+ORDER BY sku_code
+LIMIT $1 OFFSET $2;
 
 -- name: ListProductSkusByProductID :many
-SELECT ps.*, c.name as color_name, s.name as size_name
+SELECT sqlc.embed(ps), sqlc.embed(c), sqlc.embed(s)
 FROM product_skus ps
 LEFT JOIN colors c ON ps.color_id = c.id
 LEFT JOIN sizes s ON ps.size_id = s.id
-WHERE ps.product_id = $1 AND ps.is_active = TRUE
-ORDER BY c.name, s.name;
+WHERE ps.product_id = $1 AND (is_active = $2 OR $2 IS NULL)
+ORDER BY ps.name
+LIMIT $3 OFFSET $4;
 
 -- name: CreateProductSku :one
 INSERT INTO product_skus (
@@ -48,3 +50,7 @@ RETURNING *;
 -- name: DeleteProductSku :exec
 DELETE FROM product_skus
 WHERE id = $1;
+
+-- name: GetProductSkuBySizeAndColor :one
+SELECT * FROM product_skus
+WHERE size_id = $1 AND color_id = $2 LIMIT 1;

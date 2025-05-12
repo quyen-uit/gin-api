@@ -9,21 +9,24 @@ SELECT ii.*, v.name as vendor_name, ps.sku_code
 FROM inventory_imports ii
 JOIN vendors v ON ii.vendor_id = v.id
 JOIN product_skus ps ON ii.sku_id = ps.id
-ORDER BY ii.import_date DESC;
+ORDER BY ii.import_date DESC
+LIMIT $1 OFFSET $2;
 
 -- name: ListInventoryImportsBySkuID :many
 SELECT ii.*, v.name as vendor_name
 FROM inventory_imports ii
 JOIN vendors v ON ii.vendor_id = v.id
 WHERE sku_id = $1
-ORDER BY import_date DESC;
+ORDER BY import_date DESC
+LIMIT $2 OFFSET $3;
 
 -- name: ListInventoryImportsByVendorID :many
 SELECT ii.*, ps.sku_code
 FROM inventory_imports ii
 JOIN product_skus ps ON ii.sku_id = ps.id
 WHERE vendor_id = $1
-ORDER BY import_date DESC;
+ORDER BY import_date DESC
+LIMIT $2 OFFSET $3;
 
 -- name: CreateInventoryImport :one
 INSERT INTO inventory_imports (

@@ -7,12 +7,8 @@ WHERE id = $1 LIMIT 1;
 -- name: ListPriceAdjustmentsBySkuID :many
 SELECT * FROM price_adjustments
 WHERE sku_id = $1
-ORDER BY start_date DESC;
-
--- name: ListActivePriceAdjustmentsBySkuID :many
-SELECT * FROM price_adjustments
-WHERE sku_id = $1 AND start_date <= NOW() AND end_date >= NOW()
-ORDER BY start_date DESC;
+ORDER BY start_date DESC
+LIMIT $2 OFFSET $3;
 
 -- name: CreatePriceAdjustment :one
 INSERT INTO price_adjustments (

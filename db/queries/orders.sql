@@ -6,16 +6,18 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListOrders :many
 SELECT * FROM orders
-ORDER BY order_date DESC;
+ORDER BY order_date DESC
+LIMIT $1 OFFSET $2;
 
--- name: ListOrdersByCustomer :many
+-- name: ListOrdersByUser :many
 SELECT * FROM orders
-WHERE customer_id = $1
-ORDER BY order_date DESC;
+WHERE user_id = $1
+ORDER BY order_date DESC
+LIMIT $2 OFFSET $3;
 
 -- name: CreateOrder :one
 INSERT INTO orders (
-  customer_id,
+  user_id,
   order_date,
   total_amount,
   status,

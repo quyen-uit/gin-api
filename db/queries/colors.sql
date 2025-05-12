@@ -6,7 +6,8 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListColors :many
 SELECT * FROM colors
-ORDER BY name;
+ORDER BY name
+LIMIT $1 OFFSET $2;
 
 -- name: CreateColor :one
 INSERT INTO colors (

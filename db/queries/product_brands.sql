@@ -6,7 +6,8 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListProductBrands :many
 SELECT * FROM product_brands
-ORDER BY name;
+ORDER BY name
+LIMIT $1 OFFSET $2;
 
 -- name: CreateProductBrand :one
 INSERT INTO product_brands (
