@@ -1,0 +1,1906 @@
+Okay, fantastic! Using TypeScript is a highly recommended best practice for a startup project, as it significantly improves code quality, maintainability, and developer experience.
+
+This guide will provide you with the full source code, step-by-step, with all files configured for TypeScript (.tsx and .ts extensions). I will highlight the specific TypeScript additions (interfaces, types) as we go.
+
+Step-by-Step Guide for React + Vite + TypeScript Boilerplate
+Follow these steps precisely. Do not skip any installation or configuration.
+
+Step 0: Initial Project Setup
+Create your Vite project with React + TypeScript template:
+Open your terminal or command prompt and run:
+
+Bash
+
+npm create vite@latest my-startup-boilerplate-ts -- --template react-ts
+This will create a new directory my-startup-boilerplate-ts with a basic React TypeScript project structure, including tsconfig.json.
+
+Navigate into your new project directory:
+
+Bash
+
+cd my-startup-boilerplate-ts
+Install initial dependencies:
+
+Bash
+
+npm install
+# or yarn install
+Step 1: Install All Required Dependencies
+Now, install all the libraries we need, including their TypeScript type definitions where necessary.
+
+Bash
+
+npm install \
+  @emotion/react \
+  @emotion/styled \
+  @fontsource/roboto \
+  @hookform/resolvers \
+  @mui/material \
+  @reduxjs/toolkit \
+  react-redux \
+  react-router-dom \
+  react-hook-form \
+  zod \
+  i18next \
+  react-i18next \
+  i18next-browser-languagedetector \
+  axios
+
+npm install -D \
+  autoprefixer \
+  eslint \
+  eslint-config-prettier \
+  eslint-plugin-prettier \
+  eslint-plugin-react \
+  eslint-plugin-react-hooks \
+  eslint-plugin-react-refresh \
+  husky \
+  lint-staged \
+  postcss \
+  prettier \
+  tailwindcss \
+  @types/react \
+  @types/react-dom \
+  @types/node \
+  @typescript-eslint/eslint-plugin \
+  @typescript-eslint/parser \
+  vite
+Step 2: Configure Root Files (ESLint, Prettier, Husky, Tailwind, Vite)
+These files are located directly in your project root (my-startup-boilerplate-ts/).
+
+package.json (Update existing)
+Changes: Added lint-staged configuration.
+
+Action: Replace the content of your package.json with this.
+
+JSON
+
+{
+  "name": "my-startup-boilerplate-ts",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "preview": "vite preview",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@hookform/resolvers": "^3.6.0",
+    "@mui/material": "^5.15.20",
+    "@reduxjs/toolkit": "^2.2.5",
+    "axios": "^1.7.2",
+    "i18next": "^23.11.5",
+    "i18next-browser-languagedetector": "^8.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.0",
+    "react-i18next": "^14.1.2",
+    "react-redux": "^9.1.2",
+    "react-router-dom": "^6.23.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.34.2",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "postcss": "^8.4.38",
+    "prettier": "^3.3.2",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}
+.eslintrc.cjs (Update existing)
+Changes: Configured for TypeScript linting with @typescript-eslint/parser and @typescript-eslint/eslint-plugin.
+
+Action: Replace the content of your .eslintrc.cjs with this.
+
+JavaScript
+
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true, node: true },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended', // TypeScript specific rules
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended', // Must be last to override formatting rules
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  parser: '@typescript-eslint/parser', // Use TypeScript parser
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: './tsconfig.json', // Specify tsconfig for stricter rules
+  },
+  settings: {
+    react: { version: '18.2' },
+    // Auto-detect tsconfig for import resolver
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true, // always try to resolve types under tsconfig.json
+      },
+    },
+  },
+  plugins: ['react-refresh'],
+  rules: {
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+    'react/react-in-jsx-scope': 'off', // Not needed with new JSX transform
+    'react/prop-types': 'off', // Disabled as TypeScript handles prop types
+    'prettier/prettier': 'error', // Ensure Prettier rules are enforced as errors
+    'no-unused-vars': 'off', // Disable base rule
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }], // TypeScript-aware unused vars
+    '@typescript-eslint/no-explicit-any': 'warn', // Warn against `any`
+    // Add or adjust other rules as per your team's preference
+  },
+};
+.prettierrc.cjs (Create new if not exists, otherwise update)
+Action: Create or replace the content of .prettierrc.cjs with this.
+
+JavaScript
+
+module.exports = {
+  semi: true,
+  trailingComma: 'all',
+  singleQuote: true,
+  printWidth: 100,
+  tabWidth: 2,
+  useTabs: false,
+};
+.husky/pre-commit (Set up Husky)
+Initialize Husky:
+
+Bash
+
+npx husky init
+Add the pre-commit hook:
+
+Bash
+
+npx husky add .husky/pre-commit "npx lint-staged"
+This will create the .husky/pre-commit file. Its content should look like:
+
+Bash
+
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx lint-staged
+postcss.config.cjs (Create new if not exists, otherwise update)
+Action: Create or replace the content of postcss.config.cjs with this.
+
+JavaScript
+
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+tailwind.config.cjs (Create new if not exists, otherwise update)
+Changes: content array includes tsx files.
+
+Action: Create or replace the content of tailwind.config.cjs with this.
+
+JavaScript
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}', // Includes TSX files
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1976d2', // Material UI default primary blue
+        secondary: '#dc004e', // Material UI default secondary pink
+      },
+    },
+  },
+  plugins: [],
+  // Optional: If Material UI's CSS reset conflicts with Tailwind's Preflight, uncomment this:
+  // corePlugins: {
+  //   preflight: false,
+  // },
+};
+tsconfig.json (Update existing)
+Changes: Added paths for @ alias. Removed "isolatedModules": true and "noEmit": true which are typical for Vite + Babel but conflict with a full TypeScript build if using tsc -b. Changed target to ES2020 for modern browsers.
+
+Action: Replace the content of your tsconfig.json with this.
+
+JSON
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path Aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "vite-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+tsconfig.node.json (Update existing)
+Changes: Ensure this matches the tsconfig.json references.
+
+Action: Replace the content of your tsconfig.node.json with this.
+
+JSON
+
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts", ".eslintrc.cjs", "postcss.config.cjs", "tailwind.config.cjs"]
+}
+vite.config.ts (Update existing)
+Changes: Changed file extension to .ts, and added path import type.
+
+Action: Replace the content of your vite.config.ts with this.
+
+TypeScript
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path'; // Import path module
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      // Configure the @ alias for src directory
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 3000,
+    open: true,
+  },
+});
+.env (Create new)
+# This file is loaded in all modes
+
+VITE_APP_NAME="My Startup Boilerplate TS"
+.env.development (Create new)
+# Variables specific to development environment
+# Loaded when running `npm run dev`
+
+VITE_API_BASE_URL="http://localhost:5000/api"
+VITE_ENABLE_DEBUG_LOGS=true
+.env.production (Create new)
+# Variables specific to production environment
+# Loaded when running `npm run build`
+
+VITE_API_BASE_URL="https://api.yourproductiondomain.com/api"
+VITE_ANALYTICS_ID="UA-XXXXX-Y"
+.gitignore (Update existing)
+Changes: Ensure .env.local is ignored.
+
+Action: Add .env.local to your .gitignore file.
+
+# .gitignore
+# ... (existing content)
+
+# Environment variables
+.env.local
+Step 3: Public Folder
+public/index.html (Update existing)
+Changes: Minor update to title.
+
+Action: Replace the content of your public/index.html with this.
+
+HTML
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Startup Boilerplate TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+Step 4: src/ Folder - Core Application Files
+src/main.tsx (Update existing)
+Changes: Changed extension to .tsx, added Material UI ThemeProvider and CssBaseline.
+
+Action: Replace the content of your src/main.tsx with this.
+
+TypeScript
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline'; // Material UI's CSS reset
+
+import App from './App.tsx';
+import { store } from './store';
+import './i18n'; // Initialize i18n
+import './styles/index.css'; // Tailwind CSS imports & global styles
+
+// Material UI custom theme (optional, but good for consistency)
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2', // Example: a shade of blue
+    },
+    secondary: {
+      main: '#dc004e', // Example: a shade of pink
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, sans-serif',
+  },
+  components: {
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
+    },
+  },
+});
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </Provider>
+  </React.StrictMode>,
+);
+src/App.tsx (Update existing)
+Changes: Changed extension to .tsx.
+
+Action: Replace the content of your src/App.tsx with this.
+
+TypeScript
+
+import React from 'react';
+import AppRoutes from './routes';
+import config from './config';
+import Header from './components/layout/Header'; // Ensure this path is correct if you move Header later
+
+function App() {
+  console.log('App is running in:', import.meta.env.MODE, 'mode');
+  console.log('API Base URL from config:', config.apiBaseUrl);
+  if (config.enableDebugLogs) {
+    console.log('Debug logs are enabled!');
+  }
+
+  return (
+    <div className="App min-h-screen flex flex-col">
+      <Header /> {/* Your global header */}
+      <main className="flex-grow">
+        <AppRoutes />
+      </main>
+      {/* <Footer /> */}
+    </div>
+  );
+}
+
+export default App;
+src/styles/index.css (Create new if not exists, otherwise update)
+Action: Create or replace the content of src/styles/index.css with this.
+
+CSS
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Material UI Font Imports (from @fontsource/roboto) */
+@import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+
+/* Global styles */
+html, body, #root, .App {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  @apply mx-auto px-4;
+}
+Step 5: src/assets/ Folder (Empty initially)
+Action: Create this folder: src/assets/
+
+You can create subfolders like images/ or icons/ if you wish.
+
+Step 6: src/components/ Folder
+src/components/common/LoadingSpinner.tsx (Create new)
+Changes: Changed extension to .tsx. Added LoadingSpinnerProps interface.
+
+Action: Create src/components/common/ and then src/components/common/LoadingSpinner.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import { CircularProgressProps } from '@mui/material/CircularProgress'; // Import prop types
+
+interface LoadingSpinnerProps extends CircularProgressProps {
+  // You can extend or add custom props here if needed
+}
+
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 40, color = 'primary', ...props }) => {
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <CircularProgress size={size} color={color} {...props} />
+    </Box>
+  );
+};
+
+export default LoadingSpinner;
+src/components/layout/Header.tsx (Create new)
+Changes: Changed extension to .tsx. Added React.FC.
+
+Action: Create src/components/layout/ and then src/components/layout/Header.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import config from '@/config';
+
+const Header: React.FC = () => {
+  const { isAuthenticated, logout } = useAuth();
+  const { t, i18n } = useTranslation('common');
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
+  return (
+    <AppBar position="static" className="shadow-md">
+      <Toolbar className="flex justify-between items-center px-4">
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Link to="/" className="text-white no-underline">
+            {config.appName}
+          </Link>
+        </Typography>
+        <div>
+          <Button color="inherit" onClick={() => handleLanguageChange('en')}>
+            {t('language.en')}
+          </Button>
+          <Button color="inherit" onClick={() => handleLanguageChange('fr')}>
+            {t('language.fr')}
+          </Button>
+          {isAuthenticated ? (
+            <Button color="inherit" onClick={logout}>
+              {t('auth.logout')}
+            </Button>
+          ) : (
+            <Button color="inherit" component={Link} to="/login">
+              {t('auth.login')}
+            </Button>
+          )}
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Header;
+Step 7: src/config/ Folder
+src/config/index.ts (Create new)
+Changes: Changed extension to .ts. Defined Config interface.
+
+Action: Create src/config/ and then src/config/index.ts with this content.
+
+TypeScript
+
+// src/config/index.ts
+
+interface Config {
+  appName: string;
+  apiBaseUrl: string;
+  enableDebugLogs: boolean;
+  analyticsId?: string; // Optional property
+}
+
+const config: Config = {
+  appName: import.meta.env.VITE_APP_NAME || 'Default App Name',
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
+  enableDebugLogs: import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true', // Env vars are strings!
+  analyticsId: import.meta.env.VITE_ANALYTICS_ID,
+};
+
+export default config;
+src/config/axiosInstance.ts (Create new)
+Changes: Changed extension to .ts. Added types for error.response.
+
+Action: Create src/config/axiosInstance.ts with this content.
+
+TypeScript
+
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { store } from '@/store'; // Import your Redux store
+import { logout } from '@/store/slices/authSlice';
+import config from './index'; // Import global config
+
+const axiosInstance = axios.create({
+  baseURL: config.apiBaseUrl,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor
+axiosInstance.interceptors.request.use(
+  (reqConfig: AxiosRequestConfig) => {
+    const token = store.getState().auth.token;
+    if (token && reqConfig.headers) {
+      reqConfig.headers.Authorization = `Bearer ${token}`;
+    }
+    return reqConfig;
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  },
+);
+
+// Response interceptor
+axiosInstance.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response;
+  },
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+
+    if (error.response?.status === 401 && !originalRequest?._retry) {
+      originalRequest._retry = true;
+      // In a real app, you might try to refresh the token here.
+      // For simplicity, we just log out and redirect.
+      store.dispatch(logout()); // Dispatch logout action
+      window.location.href = '/login'; // Redirect to login page
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status && error.response.status >= 500) {
+      console.error('Server Error:', error.response.data);
+      // You could dispatch a global toast/notification here
+    }
+    return Promise.reject(error);
+  },
+);
+
+export default axiosInstance;
+Step 8: src/constants/ Folder (Empty initially)
+Action: Create this folder: src/constants/
+
+src/constants/index.ts (Create new)
+Changes: Changed extension to .ts. Added const assertions.
+
+Action: Create src/constants/index.ts with this content.
+
+TypeScript
+
+export const USER_ROLES = {
+  ADMIN: 'admin',
+  USER: 'user',
+  GUEST: 'guest',
+} as const; // 'as const' makes these literal types
+
+export const API_ENDPOINTS = {
+  LOGIN: '/auth/login',
+  REGISTER: '/auth/register',
+  PROFILE: '/auth/profile',
+  PRODUCTS: '/products',
+} as const;
+Step 9: src/contexts/ Folder (Empty initially)
+Action: Create this folder: src/contexts/
+
+Step 10: src/hooks/ Folder
+src/hooks/useAuth.ts (Create new)
+Changes: Changed extension to .ts. Added types for credentials, userData, AuthResponse, User, LoginCredentials, RegisterData.
+
+Action: Create src/hooks/useAuth.ts with this content.
+
+TypeScript
+
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '@/store'; // Import RootState type
+import { setCredentials, logout } from '@/store/slices/authSlice';
+import { useLoginMutation, useRegisterMutation, useGetProfileQuery } from '@/services/authApi';
+import { useEffect } from 'react';
+import { LoginCredentials, RegisterData, User } from '@/types/auth'; // Import types
+
+interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+const useAuth = () => {
+  const { token, user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [loginApi, { isLoading: isLoggingIn }] = useLoginMutation();
+  const [registerApi, { isLoading: isRegistering }] = useRegisterMutation();
+  const {
+    data: profile,
+    isLoading: isLoadingProfile,
+    isFetching: isFetchingProfile,
+    error: profileError,
+  } = useGetProfileQuery<User>(undefined, {
+    skip: !isAuthenticated,
+    refetchOnMountOrArgChange: true,
+  });
+
+  useEffect(() => {
+    if (profile && isAuthenticated && (!user || user.id !== profile.id)) {
+      dispatch(setCredentials({ token: token!, user: profile })); // token! is safe here because isAuthenticated implies token
+    }
+    if ((profileError as any)?.status === 401 && isAuthenticated) {
+      console.warn('Auth token expired or invalid, logging out...');
+      dispatch(logout());
+      navigate('/login');
+    }
+  }, [profile, profileError, isAuthenticated, user, token, dispatch, navigate]);
+
+  const handleLogin = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    try {
+      const result = await loginApi(credentials).unwrap();
+      dispatch(setCredentials({ token: result.token, user: result.user }));
+      return result;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  };
+
+  const handleRegister = async (userData: RegisterData): Promise<AuthResponse> => {
+    try {
+      const result = await registerApi(userData).unwrap();
+      return result;
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
+  const isLoadingAuth = isLoggingIn || isRegistering || isLoadingProfile || isFetchingProfile;
+
+  return {
+    token,
+    user: user || profile,
+    isAuthenticated,
+    isLoadingAuth,
+    login: handleLogin,
+    register: handleRegister,
+    logout: handleLogout,
+  };
+};
+
+export default useAuth;
+src/hooks/useDebounce.ts (Create new)
+Changes: Changed extension to .ts. Added generic type T.
+
+Action: Create src/hooks/useDebounce.ts with this content.
+
+TypeScript
+
+import { useState, useEffect } from 'react';
+
+/**
+ * Custom hook to debounce a value.
+ * Useful for delaying state updates, e.g., for search input fields.
+ *
+ * @param {T} value The value to debounce.
+ * @param {number} delay The delay in milliseconds.
+ * @returns {T} The debounced value.
+ */
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+export default useDebounce;
+src/hooks/useFetch.ts (Create new)
+Changes: Changed extension to .ts. Added generic types TData and TError. Defined return type.
+
+Action: Create src/hooks/useFetch.ts with this content.
+
+TypeScript
+
+import { useState, useEffect, useCallback } from 'react';
+import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'; // Import Axios types
+import axiosInstance from '@/config/axiosInstance';
+
+interface UseFetchResult<TData, TError = any> {
+  data: TData | null;
+  loading: boolean;
+  error: TError | null;
+  refetch: (manualOptions?: AxiosRequestConfig) => Promise<void>;
+}
+
+/**
+ * Custom hook for making API requests using Axios.
+ * NOTE: For most data fetching, RTK Query is preferred. Use this for
+ * specific cases like file uploads, downloads, or when you need more
+ * granular control over a single Axios call outside of RTK Query.
+ *
+ * @param {string} url The API endpoint URL.
+ * @param {AxiosRequestConfig} options Axios request options (method, data, headers, etc.).
+ * @param {boolean} skip If true, the request will not be made automatically on mount.
+ * @returns {UseFetchResult<TData, TError>}
+ */
+const useFetch = <TData, TError = AxiosError>(
+  url: string,
+  options: AxiosRequestConfig = {},
+  skip: boolean = false,
+): UseFetchResult<TData, TError> => {
+  const [data, setData] = useState<TData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<TError | null>(null);
+
+  const fetchData = useCallback(async (manualOptions: AxiosRequestConfig = {}): Promise<void> => {
+    if (skip) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response: AxiosResponse<TData> = await axiosInstance({
+        url,
+        ...options,
+        ...manualOptions,
+      });
+      setData(response.data);
+    } catch (err: any) { // Type 'any' for the caught error to allow flexible error handling
+      setError(err as TError);
+    } finally {
+      setLoading(false);
+    }
+  }, [url, options, skip]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+};
+
+export default useFetch;
+Step 11: src/i18n/ Folder
+src/i18n/index.ts (Create new)
+Changes: Changed extension to .ts.
+
+Action: Create src/i18n/ and then src/i18n/index.ts with this content.
+
+TypeScript
+
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+// Import translation files
+import enCommon from './locales/en/common.json';
+import frCommon from './locales/fr/common.json';
+
+const resources = {
+  en: {
+    common: enCommon,
+  },
+  fr: {
+    common: frCommon,
+  },
+};
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: 'en',
+    debug: process.env.NODE_ENV !== 'production',
+    ns: ['common'],
+    defaultNS: 'common',
+    interpolation: {
+      escapeValue: false,
+    },
+    detection: {
+      order: ['queryString', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage'],
+    },
+  });
+
+export default i18n;
+src/i18n/locales/en/common.json (Create new)
+Action: Create src/i18n/locales/en/ and then src/i18n/locales/en/common.json with this content.
+
+JSON
+
+{
+  "welcomeMessage": "Welcome to your new React app!",
+  "greeting": "Hello, {{name}}!",
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "username": "Username",
+    "loginFailed": "Login failed. Please check your credentials.",
+    "registrationSuccess": "Registration successful! Please login.",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?"
+  },
+  "language": {
+    "en": "English",
+    "fr": "French"
+  },
+  "general": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "error": "An error occurred.",
+    "loading": "Loading..."
+  }
+}
+src/i18n/locales/fr/common.json (Create new)
+Action: Create src/i18n/locales/fr/ and then src/i18n/locales/fr/common.json with this content.
+
+JSON
+
+{
+  "welcomeMessage": "Bienvenue dans votre nouvelle application React !",
+  "greeting": "Bonjour, {{name}} !",
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "username": "Nom d'utilisateur",
+    "loginFailed": "Échec de la connexion. Veuillez vérifier vos informations d'identification.",
+    "registrationSuccess": "Inscription réussie ! Veuillez vous connecter.",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?"
+  },
+  "language": {
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "general": {
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "error": "Une erreur est survenue.",
+    "loading": "Chargement..."
+  }
+}
+Step 12: src/routes/ Folder
+src/routes/index.tsx (Create new)
+Changes: Changed extension to .tsx.
+
+Action: Create src/routes/ and then src/routes/index.tsx with this content.
+
+TypeScript
+
+import React, { Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import PublicRoutes from './PublicRoutes.tsx';
+import PrivateRoutes from './PrivateRoutes.tsx';
+import LoadingSpinner from '@/components/common/LoadingSpinner.tsx';
+import Header from '@/components/layout/Header.tsx';
+
+// Lazy-loaded components for code splitting
+const LoginPage = React.lazy(() => import('@/views/auth/LoginPage.tsx'));
+const RegisterPage = React.lazy(() => import('@/views/auth/RegisterPage.tsx'));
+const DashboardPage = React.lazy(() => import('@/views/dashboard/DashboardPage.tsx'));
+const NotFoundPage = React.lazy(() => import('@/views/NotFoundPage.tsx'));
+
+const AppRoutes: React.FC = () => {
+  return (
+    <BrowserRouter>
+      {/* Header can be here if it's always present regardless of route */}
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          {/* Public Routes */}
+          <Route element={<PublicRoutes />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            {/* Add other public-facing routes */}
+          </Route>
+
+          {/* Private Routes */}
+          <Route element={<PrivateRoutes />}>
+            <Route path="/" element={<DashboardPage />} />
+            {/* Add other authenticated routes */}
+          </Route>
+
+          {/* Catch-all for 404 Not Found */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+};
+
+export default AppRoutes;
+src/routes/PrivateRoutes.tsx (Create new)
+Changes: Changed extension to .tsx.
+
+Action: Create src/routes/PrivateRoutes.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import LoadingSpinner from '@/components/common/LoadingSpinner.tsx';
+
+const PrivateRoutes: React.FC = () => {
+  const { isAuthenticated, isLoadingAuth } = useAuth();
+  const location = useLocation();
+
+  if (isLoadingAuth) {
+    return <LoadingSpinner />;
+  }
+
+  return isAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/login" state={{ from: location }} replace />
+  );
+};
+
+export default PrivateRoutes;
+src/routes/PublicRoutes.tsx (Create new)
+Changes: Changed extension to .tsx.
+
+Action: Create src/routes/PublicRoutes.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import LoadingSpinner from '@/components/common/LoadingSpinner.tsx';
+
+const PublicRoutes: React.FC = () => {
+  const { isAuthenticated, isLoadingAuth } = useAuth();
+
+  if (isLoadingAuth) {
+    return <LoadingSpinner />;
+  }
+
+  return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
+};
+
+export default PublicRoutes;
+Step 13: src/services/ Folder
+src/services/baseApi.ts (Create new)
+Changes: Changed extension to .ts. Added types for getState().
+
+Action: Create src/services/ and then src/services/baseApi.ts with this content.
+
+TypeScript
+
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { RootState } from '@/store'; // Import RootState type
+import config from '@/config';
+
+export const baseApi = createApi({
+  reducerPath: 'baseApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: config.apiBaseUrl,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token; // Cast getState() to RootState
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ['User', 'Product', 'Order'],
+  endpoints: () => ({}),
+});
+src/services/authApi.ts (Create new)
+Changes: Changed extension to .ts. Added types for mutation/query responses and request bodies.
+
+Action: Create src/services/authApi.ts with this content.
+
+TypeScript
+
+import { baseApi } from './baseApi';
+import { LoginCredentials, RegisterData, User } from '@/types/auth'; // Import types
+
+interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+export const authApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation<AuthResponse, LoginCredentials>({
+      query: (credentials) => ({
+        url: 'auth/login',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+    register: builder.mutation<AuthResponse, RegisterData>({
+      query: (userData) => ({
+        url: 'auth/register',
+        method: 'POST',
+        body: userData,
+      }),
+    }),
+    getProfile: builder.query<User, void>({ // Response type is User, no argument needed
+      query: () => 'auth/profile',
+      providesTags: ['User'],
+    }),
+    logout: builder.mutation<void, void>({ // No response, no argument
+      query: () => ({
+        url: 'auth/logout',
+        method: 'POST',
+      }),
+    }),
+  }),
+});
+
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useGetProfileQuery,
+  useLogoutMutation,
+} = authApi;
+src/services/productApi.ts (Create new)
+Changes: Changed extension to .ts. Added types for Product, QueryProductsArgs.
+
+Action: Create src/services/productApi.ts with this content.
+
+TypeScript
+
+import { baseApi } from './baseApi';
+import { Product } from '@/types/product'; // Assuming you define a Product type
+
+interface QueryProductsArgs {
+  page?: number;
+  limit?: number;
+  search?: string;
+  // Add other query parameters
+}
+
+export const productApi = baseApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getProducts: builder.query<Product[], QueryProductsArgs>({
+      query: (params) => ({
+        url: 'products',
+        params,
+      }),
+      providesTags: (result) =>
+        result
+          ? [...result.map(({ id }) => ({ type: 'Product' as const, id })), { type: 'Product' as const, id: 'LIST' }]
+          : [{ type: 'Product' as const, id: 'LIST' }],
+    }),
+    getProductById: builder.query<Product, string>({ // Response type is Product, argument is string (id)
+      query: (id) => `products/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Product' as const, id }],
+    }),
+    addProduct: builder.mutation<Product, Omit<Product, 'id'>>({ // Response is Product, request is Product without ID
+      query: (newProduct) => ({
+        url: 'products',
+        method: 'POST',
+        body: newProduct,
+      }),
+      invalidatesTags: [{ type: 'Product' as const, id: 'LIST' }],
+    }),
+    updateProduct: builder.mutation<Product, { id: string; patch: Partial<Product> }>({
+      query: ({ id, patch }) => ({
+        url: `products/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Product' as const, id }],
+    }),
+    deleteProduct: builder.mutation<void, string>({ // No response, argument is string (id)
+      query: (id) => ({
+        url: `products/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Product' as const, id }, { type: 'Product' as const, id: 'LIST' }],
+    }),
+  }),
+});
+
+export const {
+  useGetProductsQuery,
+  useGetProductByIdQuery,
+  useAddProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+} = productApi;
+Step 14: src/store/ Folder
+src/store/index.ts (Create new)
+Changes: Changed extension to .ts. Defined RootState and AppDispatch types.
+
+Action: Create src/store/ and then src/store/index.ts with this content.
+
+TypeScript
+
+import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { baseApi } from '../services/baseApi';
+import authReducer from './slices/authSlice';
+import { rtkQueryErrorLogger } from './middleware/rtkQueryErrorLogger';
+import { authApi } from '../services/authApi';
+import { productApi } from '../services/productApi'; // Example product API
+
+export const store = configureStore({
+  reducer: {
+    [baseApi.reducerPath]: baseApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
+    [productApi.reducerPath]: productApi.reducer, // Add product API reducer
+    auth: authReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      .concat(baseApi.middleware)
+      .concat(authApi.middleware)
+      .concat(productApi.middleware) // Add product API middleware
+      .concat(rtkQueryErrorLogger),
+  devTools: process.env.NODE_ENV !== 'production',
+});
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+setupListeners(store.dispatch);
+src/store/middleware/rtkQueryErrorLogger.ts (Create new)
+Changes: Changed extension to .ts. Added types for api and action.
+
+Action: Create src/store/middleware/ and then src/store/middleware/rtkQueryErrorLogger.ts with this content.
+
+TypeScript
+
+import { MiddlewareAPI, isRejectedWithValue } from '@reduxjs/toolkit';
+import { AppDispatch, RootState, store } from '@/store'; // Import store and types
+import { logout } from '@/store/slices/authSlice';
+// import { toast } from 'react-toastify'; // If you add react-toastify
+
+/**
+ * RTK Query Error Logger Middleware
+ * Logs API errors and can dispatch global actions (e.g., logout on 401)
+ *
+ * @param {MiddlewareAPI<AppDispatch, RootState>} api Redux Toolkit Query API object
+ */
+export const rtkQueryErrorLogger = (api: MiddlewareAPI<AppDispatch, RootState>) => (next: AppDispatch) => (action: any) => {
+  if (isRejectedWithValue(action)) {
+    console.error('RTK Query Error:', action.payload);
+
+    const status = action.payload?.status;
+    const errorMessage = action.payload?.data?.message || 'An unexpected error occurred.';
+
+    if (status === 401) {
+      console.warn('Unauthorized: Token expired or invalid. Logging out...');
+      store.dispatch(logout());
+      // toast.error('Session expired. Please log in again.');
+      // Optionally redirect to login: window.location.href = '/login';
+    } else if (status === 403) {
+      // toast.warn('You do not have permission to perform this action.');
+    } else if (status && status >= 500) {
+      // toast.error(`Server error: ${errorMessage}`);
+    } else if (errorMessage) {
+      // toast.error(`API Error: ${errorMessage}`);
+    }
+  }
+
+  return next(action);
+};
+src/store/slices/authSlice.ts (Create new)
+Changes: Changed extension to .ts. Defined AuthState and User types.
+
+Action: Create src/store/slices/ and then src/store/slices/authSlice.ts with this content.
+
+TypeScript
+
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { User } from '@/types/auth'; // Import User type
+
+interface AuthState {
+  token: string | null;
+  user: User | null;
+  isAuthenticated: boolean;
+}
+
+const getUserFromLocalStorage = (): User | null => {
+  try {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  } catch (e) {
+    console.error("Failed to parse user from localStorage", e);
+    return null;
+  }
+};
+
+const initialState: AuthState = {
+  token: localStorage.getItem('token') || null,
+  user: getUserFromLocalStorage(),
+  isAuthenticated: !!localStorage.getItem('token'),
+};
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    setCredentials: (state, action: PayloadAction<{ token: string; user: User }>) => {
+      state.token = action.payload.token;
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
+    },
+    logout: (state) => {
+      state.token = null;
+      state.user = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Optionally clear RTK Query cache on logout
+      // import { baseApi } from '@/services/baseApi';
+      // store.dispatch(baseApi.util.resetApiState());
+    },
+    updateUserProfile: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
+  },
+});
+
+export const { setCredentials, logout, updateUserProfile } = authSlice.actions;
+export default authSlice.reducer;
+Step 15: src/types/ Folder (New folder for global types)
+Action: Create this new folder: src/types/
+
+src/types/auth.ts (Create new)
+Action: Create src/types/auth.ts with this content.
+
+TypeScript
+
+// src/types/auth.ts
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  role: 'admin' | 'user' | 'guest'; // Example roles
+  // Add other user profile properties
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData extends LoginCredentials {
+  username: string;
+  confirmPassword: string;
+}
+src/types/product.ts (Create new)
+Action: Create src/types/product.ts with this content.
+
+TypeScript
+
+// src/types/product.ts
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl?: string;
+  stock: number;
+}
+Step 16: src/utils/ Folder
+src/utils/helpers.ts (Create new)
+Changes: Changed extension to .ts. Added types for function arguments and return values.
+
+Action: Create src/utils/ and then src/utils/helpers.ts with this content.
+
+TypeScript
+
+// src/utils/helpers.ts
+
+/**
+ * Formats a date string into a more readable format.
+ * @param {string | Date} dateInput
+ * @returns {string} Formatted date string.
+ */
+export const formatDate = (dateInput: string | Date): string => {
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) {
+    return 'Invalid Date';
+  }
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
+/**
+ * Capitalizes the first letter of a string.
+ * @param {string} str
+ * @returns {string} Capitalized string.
+ */
+export const capitalizeFirstLetter = (str: string): string => {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+/**
+ * Generates a unique ID (simple, for client-side use).
+ * @returns {string} Unique ID.
+ */
+export const generateUniqueId = (): string => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+src/utils/validationSchemas.ts (Create new)
+Changes: Changed extension to .ts. Imported z and explicitly used Zod's infer to get TypeScript types from schemas.
+
+Action: Create src/utils/validationSchemas.ts with this content.
+
+TypeScript
+
+import { z } from 'zod';
+import { LoginCredentials, RegisterData, User } from '@/types/auth'; // Import base types if needed
+
+export const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+// Infer the TypeScript type from the Zod schema
+export type LoginFormInputs = z.infer<typeof loginSchema>;
+
+export const registerSchema = z.object({
+  username: z.string().min(3, 'Username is required'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+});
+
+export type RegisterFormInputs = z.infer<typeof registerSchema>;
+
+export const userProfileSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Invalid email address'),
+  // Add other profile fields here with their validation rules
+});
+
+export type UserProfileFormInputs = z.infer<typeof userProfileSchema>;
+Step 17: src/views/ Folder
+src/views/NotFoundPage.tsx (Create new)
+Changes: Changed extension to .tsx. Added React.FC.
+
+Action: Create src/views/ and then src/views/NotFoundPage.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
+const NotFoundPage: React.FC = () => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '80vh',
+        textAlign: 'center',
+        p: 3,
+      }}
+      className="bg-gray-100"
+    >
+      <Typography variant="h1" component="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'primary.main' }}>
+        404
+      </Typography>
+      <Typography variant="h4" component="h2" sx={{ mb: 2 }}>
+        Page Not Found
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 4, maxWidth: 'md' }}>
+        Oops! The page you are looking for does not exist. It might have been moved or deleted.
+      </Typography>
+      <Button variant="contained" color="primary" component={Link} to="/">
+        Go to Homepage
+      </Button>
+    </Box>
+  );
+};
+
+export default NotFoundPage;
+src/views/auth/LoginPage.tsx (Create new)
+Changes: Changed extension to .tsx. Imported LoginFormInputs type, and added types for data and err.
+
+Action: Create src/views/auth/ and then src/views/auth/LoginPage.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, LoginFormInputs } from '@/utils/validationSchemas';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useTranslation } from 'react-i18next';
+import { SerializedError } from '@reduxjs/toolkit'; // For RTK Query errors
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
+const LoginPage: React.FC = () => {
+  const { t } = useTranslation('common');
+  const { login, isLoadingAuth } = useAuth();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<LoginFormInputs>({ // Specify the type for useForm
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      await login(data);
+      navigate('/');
+    } catch (err: any) { // Use 'any' for caught error for flexibility, then narrow
+      let errorMessage = t('auth.loginFailed');
+      if ((err as FetchBaseQueryError).data && (err as FetchBaseQueryError).data.message) {
+        errorMessage = (err as FetchBaseQueryError).data.message as string;
+      } else if ((err as SerializedError).message) {
+        errorMessage = (err as SerializedError).message;
+      }
+      setError('root.serverError', { type: 'manual', message: errorMessage });
+      console.error('Login failed:', err);
+    }
+  };
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-md mx-auto mt-10 p-6 shadow-lg rounded-lg bg-white"
+    >
+      <Typography variant="h5" component="h2" className="text-2xl font-bold mb-6 text-center">
+        {t('auth.login')}
+      </Typography>
+
+      <TextField
+        label={t('auth.email')}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('email')}
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        autoComplete="email"
+      />
+
+      <TextField
+        label={t('auth.password')}
+        type="password"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('password')}
+        error={!!errors.password}
+        helperText={errors.password?.message}
+        autoComplete="current-password"
+      />
+
+      {errors.root?.serverError && (
+        <Typography color="error" variant="body2" className="mt-2">
+          {errors.root.serverError.message}
+        </Typography>
+      )}
+
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        disabled={isLoadingAuth}
+        className="mt-6"
+        startIcon={isLoadingAuth ? <CircularProgress size={20} color="inherit" /> : null}
+      >
+        {isLoadingAuth ? t('general.loading') : t('auth.login')}
+      </Button>
+
+      <Typography variant="body2" className="mt-4 text-center">
+        {t('auth.noAccount')} <Link to="/register" className="text-blue-600 hover:underline">{t('auth.register')}</Link>
+      </Typography>
+    </Box>
+  );
+};
+
+export default LoginPage;
+src/views/auth/RegisterPage.tsx (Create new)
+Changes: Changed extension to .tsx. Imported RegisterFormInputs type, and added types for data and err.
+
+Action: Create src/views/auth/ and then src/views/auth/RegisterPage.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema, RegisterFormInputs } from '@/utils/validationSchemas';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useTranslation } from 'react-i18next';
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+
+const RegisterPage: React.FC = () => {
+  const { t } = useTranslation('common');
+  const { register: registerUser, isLoadingAuth } = useAuth(); // Renamed to avoid conflict with RHF register
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterFormInputs>({ // Specify the type for useForm
+    resolver: zodResolver(registerSchema),
+  });
+
+  const onSubmit = async (data: RegisterFormInputs) => {
+    try {
+      await registerUser(data);
+      navigate('/login', { state: { registrationSuccess: true } }); // Redirect with state
+    } catch (err: any) {
+      let errorMessage = t('general.error');
+      if ((err as FetchBaseQueryError).data && (err as FetchBaseQueryError).data.message) {
+        errorMessage = (err as FetchBaseQueryError).data.message as string;
+      } else if ((err as SerializedError).message) {
+        errorMessage = (err as SerializedError).message;
+      }
+      setError('root.serverError', { type: 'manual', message: errorMessage });
+      console.error('Registration failed:', err);
+    }
+  };
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-md mx-auto mt-10 p-6 shadow-lg rounded-lg bg-white"
+    >
+      <Typography variant="h5" component="h2" className="text-2xl font-bold mb-6 text-center">
+        {t('auth.register')}
+      </Typography>
+
+      <TextField
+        label={t('auth.username')}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('username')}
+        error={!!errors.username}
+        helperText={errors.username?.message}
+      />
+
+      <TextField
+        label={t('auth.email')}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('email')}
+        error={!!errors.email}
+        helperText={errors.email?.message}
+      />
+
+      <TextField
+        label={t('auth.password')}
+        type="password"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('password')}
+        error={!!errors.password}
+        helperText={errors.password?.message}
+      />
+
+      <TextField
+        label={t('auth.confirmPassword')}
+        type="password"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...register('confirmPassword')}
+        error={!!errors.confirmPassword}
+        helperText={errors.confirmPassword?.message}
+      />
+
+      {errors.root?.serverError && (
+        <Typography color="error" variant="body2" className="mt-2">
+          {errors.root.serverError.message}
+        </Typography>
+      )}
+
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        disabled={isLoadingAuth}
+        className="mt-6"
+        startIcon={isLoadingAuth ? <CircularProgress size={20} color="inherit" /> : null}
+      >
+        {isLoadingAuth ? t('general.loading') : t('auth.register')}
+      </Button>
+
+      <Typography variant="body2" className="mt-4 text-center">
+        {t('auth.haveAccount')} <Link to="/login" className="text-blue-600 hover:underline">{t('auth.login')}</Link>
+      </Typography>
+    </Box>
+  );
+};
+
+export default RegisterPage;
+src/views/dashboard/DashboardPage.tsx (Create new)
+Changes: Changed extension to .tsx. Added React.FC.
+
+Action: Create src/views/dashboard/ and then src/views/dashboard/DashboardPage.tsx with this content.
+
+TypeScript
+
+import React from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useGetProductsQuery } from '@/services/productApi';
+import { useTranslation } from 'react-i18next';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+
+const DashboardPage: React.FC = () => {
+  const { user, isAuthenticated, isLoadingAuth } = useAuth();
+  const { t } = useTranslation('common');
+
+  const { data: products, isLoading: isLoadingProducts, error: productsError } = useGetProductsQuery({}); // Pass empty object for params
+
+  if (isLoadingAuth) {
+    return (
+      <Box className="flex justify-center items-center h-screen">
+        <CircularProgress />
+        <Typography variant="h6" className="ml-4">Loading user data...</Typography>
+      </Box>
+    );
+  }
+
+  if (!isAuthenticated) {
+    // This case should ideally be handled by PrivateRoutes.tsx, but good to have a fallback
+    return (
+      <Box className="flex justify-center items-center h-screen">
+        <Typography variant="h6" color="error">You are not authenticated. Please log in.</Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box className="p-6">
+      <Typography variant="h4" component="h1" className="mb-6">
+        {t('welcomeMessage')}
+      </Typography>
+      {user && (
+        <Typography variant="h5" component="h2" className="mb-4">
+          {t('greeting', { name: user.username || user.email || 'User' })}!
+        </Typography>
+      )}
+
+      <Typography variant="h6" component="h3" className="mb-3">
+        Latest Products (Example RTK Query Data):
+      </Typography>
+
+      {isLoadingProducts && (
+        <Box className="flex items-center">
+          <CircularProgress size={20} className="mr-2" />
+          <Typography>Loading products...</Typography>
+        </Box>
+      )}
+
+      {productsError && (
+        <Alert severity="error" className="mb-4">
+          Error loading products: {(productsError as any)?.message || JSON.stringify((productsError as any)?.data)}
+        </Alert>
+      )}
+
+      {products && products.length > 0 ? (
+        <List className="bg-white p-4 rounded-lg shadow">
+          {products.map((product) => (
+            <ListItem key={product.id} divider>
+              <ListItemText primary={product.name} secondary={`Price: $${product.price}`} />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        !isLoadingProducts && !productsError && <Typography>No products found.</Typography>
+      )}
+
+      <Box className="mt-8">
+        <Typography variant="body1">
+          This is your authenticated dashboard page. You can add more features here.
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+export default DashboardPage;
+Step 18: Final Commands
+Ensure all dependencies are installed:
+If you haven't already, run:
+
+Bash
+
+npm install
+# or yarn install
+Run Husky setup (if you didn't in Step 2):
+
+Bash
+
+npx husky install
+npm run prepare # this typically runs husky install
+Start the development server:
+
+Bash
+
+npm run dev
+Your React + Vite + TypeScript boilerplate should now be up and running! This extensive setup provides a robust foundation with type safety, modern tooling, and best practices for your startup project. Remember to build out the actual UI and specific business logic as you develop your application.
+
+
+Nguồn
+
+
+
+
+
